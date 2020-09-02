@@ -4,6 +4,8 @@ import com.amartinez.reign.BuildConfig
 import com.amartinez.reign.data.remote.Api
 import com.amartinez.reign.data.repository.Repository
 import com.amartinez.reign.data.repository.RepositoryImp
+import com.amartinez.reign.data.repository.local.LocalRepository
+import com.amartinez.reign.data.repository.local.LocalRepositoryImp
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -19,6 +21,11 @@ class ProviderModule {
     @Provides
     fun provideRepository(api: Api): Repository {
         return RepositoryImp(api)
+    }
+
+    @Provides
+    fun provideLocalRepository(): LocalRepository {
+        return LocalRepositoryImp()
     }
 
     @Provides

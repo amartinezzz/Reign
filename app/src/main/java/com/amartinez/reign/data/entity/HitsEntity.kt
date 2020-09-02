@@ -19,7 +19,7 @@ class HitsEntity (
     var story_url: String?,
     var parent_id: Long?,
     var created_at_i: Long?,
-    var _tags: Array<String>?,
+    var _tags: ArrayList<String>?,
     var objectID: String?,
     var _highlightResult: HighlightResultEntity?
 ) : Parcelable

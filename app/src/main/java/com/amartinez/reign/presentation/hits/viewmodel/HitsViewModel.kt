@@ -6,17 +6,24 @@ import androidx.lifecycle.ViewModel
 import com.amartinez.reign.domain.model.Hits
 import com.amartinez.reign.domain.model.HitsPage
 import com.amartinez.reign.domain.usecase.LoadHitsUseCase
+import com.amartinez.reign.domain.usecase.local.LoadHitsLocalUseCase
+import com.amartinez.reign.domain.usecase.local.SaveHitsLocalUseCase
 import io.reactivex.observers.DisposableObserver
 
 class HitsViewModel : ViewModel() {
     private var page: Int = 0
 
     private lateinit var loadHitsUseCase: LoadHitsUseCase
+    private lateinit var saveHitsLocalUseCase: SaveHitsLocalUseCase
+    private lateinit var loadHitsLocalUseCase: LoadHitsLocalUseCase
     private var hits = MutableLiveData<ArrayList<Hits>>()
     private var deletedHits = ArrayList<Hits>()
 
-    fun setUseCase(loadHitsUseCase: LoadHitsUseCase) {
+    fun setUseCase(loadHitsUseCase: LoadHitsUseCase, saveHitsLocalUseCase: SaveHitsLocalUseCase,
+                   loadHitsLocalUseCase: LoadHitsLocalUseCase) {
         this.loadHitsUseCase = loadHitsUseCase
+        this.saveHitsLocalUseCase = saveHitsLocalUseCase
+        this.loadHitsLocalUseCase = loadHitsLocalUseCase
     }
 
     fun loadHits(isNetworkConnected: Boolean, ifRefreshing: Boolean): LiveData<ArrayList<Hits>> {
@@ -28,11 +35,10 @@ class HitsViewModel : ViewModel() {
                 loadHitsUseCase.execute(object : DisposableObserver<HitsPage>() {
                         override fun onNext(value: HitsPage) {
                             hits.postValue(clean(value.hits))
-                            //savehits(value)
+                            saveHits(value.hits)
                         }
 
                         override fun onError(e: Throwable) {
-                            e.printStackTrace()
                             val hitsNotFound = ArrayList<Hits>()
                             hits.postValue(hitsNotFound)
                         }
@@ -40,19 +46,18 @@ class HitsViewModel : ViewModel() {
                         override fun onComplete() {}
                     })
             } else {
-                /*searchLocalUseCase.setData(term).execute(object : DisposableObserver<Search>() {
-                    override fun onNext(value: Search) {
+                loadHitsLocalUseCase.execute(object : DisposableObserver<ArrayList<Hits>>() {
+                    override fun onNext(value: ArrayList<Hits>) {
                         hits.postValue(value)
                     }
 
                     override fun onError(e: Throwable) {
-                        val searchError = Search()
-                        searchError.error = true
-                        hits.postValue(searchError)
+                        val hitsNotFound = ArrayList<Hits>()
+                        hits.postValue(hitsNotFound)
                     }
 
                     override fun onComplete() {}
-                })*/
+                })
             }
         }
 
@@ -74,20 +79,6 @@ class HitsViewModel : ViewModel() {
 
                         override fun onComplete() {}
                     })
-            } else {
-                /*searchLocalUseCase.setData(term).execute(object : DisposableObserver<Search>() {
-                    override fun onNext(value: Search) {
-                        hits.postValue(value)
-                    }
-
-                    override fun onError(e: Throwable) {
-                        val searchError = Search()
-                        searchError.error = true
-                        hits.postValue(searchError)
-                    }
-
-                    override fun onComplete() {}
-                })*/
             }
         }
     }
@@ -113,13 +104,13 @@ class HitsViewModel : ViewModel() {
         hits.value?.get(position)?.let { deletedHits.add(it) }
     }
 
-    /*private fun saveHits(hits: List<Hits>) {
-        saveSearchUseCase.setData(search).execute(object : DisposableObserver<Boolean>() {
+    private fun saveHits(hits: ArrayList<Hits>) {
+        saveHitsLocalUseCase.setData(hits).execute(object : DisposableObserver<Boolean>() {
             override fun onComplete() {}
 
             override fun onNext(t: Boolean) {}
 
             override fun onError(e: Throwable) {}
         })
-    }*/
+    }
 }

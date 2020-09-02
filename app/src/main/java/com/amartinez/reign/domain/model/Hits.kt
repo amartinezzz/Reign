@@ -16,7 +16,7 @@ class Hits (
     var storyUrl: String?,
     var parentId: Long?,
     var createdAtI: Long?,
-    var tags: Array<String>?,
+    var tags: ArrayList<String>?,
     var objectID: String?,
     var highlightResult: HighlightResult?
 )

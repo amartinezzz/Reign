@@ -9,5 +9,5 @@ class CommentTextEntity (
     var value: String?,
     var matchLevel: String?,
     var fullyHighlighted: Boolean?,
-    var matchedWords: Array<String>?
+    var matchedWords: ArrayList<String>?
 ) : Parcelable

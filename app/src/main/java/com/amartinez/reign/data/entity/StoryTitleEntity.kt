@@ -7,5 +7,5 @@ import kotlinx.android.parcel.Parcelize
 class StoryTitleEntity (
     var value: String?,
     var matchLevel: String?,
-    var matchedWords: Array<String>?
+    var matchedWords: ArrayList<String>?
 ) : Parcelable

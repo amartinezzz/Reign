@@ -7,14 +7,14 @@ import com.amartinez.reign.domain.model.*
 import io.reactivex.Observable
 
 class RepositoryImp(private val api: Api) : Repository {
-    override fun loadHits(term: String): Observable<HitsPage> {
-        return api.search(term).map {
+    override fun loadHits(term: String, page: Int): Observable<HitsPage> {
+        return api.search(term, page).map {
             it.toDomain()
         }
     }
 
     private fun HitsResponse.toDomain() = HitsPage(
-        hits.map { it.toDomain() },
+        hits.map { it.toDomain() } as ArrayList<Hits>,
         nbHits, page, nbPages, hitsPerPage, exhaustiveNbHits, query, params, processingTimeMS
     )
 

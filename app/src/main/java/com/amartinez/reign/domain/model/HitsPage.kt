@@ -1,7 +1,7 @@
 package com.amartinez.reign.domain.model
 
 class HitsPage (
-    var hits: List<Hits>,
+    var hits: ArrayList<Hits>,
     var nbHits: Long,
     var page: Long,
     var nbPages: Long,

@@ -6,13 +6,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.amartinez.reign.R
@@ -29,6 +30,7 @@ class HitsFragment : Fragment() {
     private lateinit var binder: FragmentHitsBinding
     private lateinit var adapter: HitsAdapter
     private var isLoading: Boolean = false
+    private lateinit var hitsList: LiveData<ArrayList<Hits>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,11 +46,7 @@ class HitsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAdapter()
-
-        val hitsList = viewModel.loadHits(isNetworkConnected())
-        hitsList.observe(viewLifecycleOwner, Observer {
-            displaySearchResults(hitsList.value!!)
-        })
+        observeHits(false)
     }
 
     private fun injectDependencies() {
@@ -67,11 +65,37 @@ class HitsFragment : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!isLoading) {
                     if (linearLayoutManager.findLastCompletelyVisibleItemPosition() == adapter.itemCount - 1) {
-                        //viewModel.loadMore(isNetworkConnected())
+                        viewModel.loadMore(isNetworkConnected())
                         isLoading = true
                     }
                 }
             }
+        })
+
+        binder.swipeRefresh.setOnRefreshListener {
+            observeHits(true)
+            binder.swipeRefresh.isRefreshing = true
+        }
+
+        val swipeHandler = object : SwipeToDeleteCallback(requireContext()) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                viewModel.deleteHits(viewHolder.adapterPosition)
+                adapter.removeItem(viewHolder.adapterPosition)
+                adapter.notifyDataSetChanged()
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(binder.rvHits)
+    }
+
+    private fun observeHits(isRefreshing: Boolean) {
+        hitsList = viewModel.loadHits(isNetworkConnected(), isRefreshing)
+        hitsList.observe(viewLifecycleOwner, Observer {
+            if (binder.swipeRefresh.isRefreshing) {
+                adapter.clear()
+                binder.swipeRefresh.isRefreshing = false
+            }
+            displaySearchResults(hitsList.value!!)
         })
     }
 
@@ -83,14 +107,6 @@ class HitsFragment : Fragment() {
 
     fun error() {
         Toast.makeText(context, "No se encontro data", Toast.LENGTH_LONG).show()
-    }
-
-    private fun hideSoftKeyboard(view: View?) {
-        if (view != null) {
-            val imm = (view.context
-                .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-        }
     }
 
     private fun isNetworkConnected() : Boolean {

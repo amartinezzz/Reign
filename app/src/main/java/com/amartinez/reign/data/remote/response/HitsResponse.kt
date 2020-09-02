@@ -3,7 +3,7 @@ package com.amartinez.reign.data.remote.response
 import com.amartinez.reign.data.entity.HitsEntity
 
 class HitsResponse (
-    var hits: List<HitsEntity>,
+    var hits: ArrayList<HitsEntity>,
     var nbHits: Long,
     var page: Long,
     var nbPages: Long,

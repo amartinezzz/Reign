@@ -5,6 +5,7 @@ import io.reactivex.Observable
 
 interface Repository {
     fun loadHits(
-        term: String
+        term: String,
+        page: Int
     ): Observable<HitsPage>
 }

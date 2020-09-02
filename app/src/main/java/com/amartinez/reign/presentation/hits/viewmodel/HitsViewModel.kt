@@ -8,22 +8,26 @@ import com.amartinez.reign.domain.model.HitsPage
 import com.amartinez.reign.domain.usecase.LoadHitsUseCase
 import io.reactivex.observers.DisposableObserver
 
-class HitsViewModel() : ViewModel() {
+class HitsViewModel : ViewModel() {
     private var page: Int = 0
 
     private lateinit var loadHitsUseCase: LoadHitsUseCase
-    private var hits = MutableLiveData<List<Hits>>()
+    private var hits = MutableLiveData<ArrayList<Hits>>()
+    private var deletedHits = ArrayList<Hits>()
 
     fun setUseCase(loadHitsUseCase: LoadHitsUseCase) {
         this.loadHitsUseCase = loadHitsUseCase
     }
 
-    fun loadHits(isNetworkConnected: Boolean): LiveData<List<Hits>> {
-        hits = MutableLiveData<List<Hits>>().also {
+    fun loadHits(isNetworkConnected: Boolean, ifRefreshing: Boolean): LiveData<ArrayList<Hits>> {
+        if(ifRefreshing)
+            hits = MutableLiveData<ArrayList<Hits>>()
+
+        hits.also {
             if (isNetworkConnected) {
                 loadHitsUseCase.execute(object : DisposableObserver<HitsPage>() {
                         override fun onNext(value: HitsPage) {
-                            hits.postValue(value.hits)
+                            hits.postValue(clean(value.hits))
                             //savehits(value)
                         }
 
@@ -55,32 +59,23 @@ class HitsViewModel() : ViewModel() {
         return hits
     }
 
-    /*fun loadMore(isNetworkConnected: Boolean) {
+    fun loadMore(isNetworkConnected: Boolean) {
         page++
         hits.also {
             if (isNetworkConnected) {
-                loadHitsUseCase.setData(term, limit*page)
-                    .execute(object : DisposableObserver<Search>() {
-                        override fun onNext(value: Search) {
-                            value.term = term
-                            for(i in 0 until value.results.size - limit - 1) {
-                                (value.results as ArrayList).removeAt(i)
-                            }
-
-                            hits.postValue(value)
-                            saveHits(value)
+                loadHitsUseCase.setData(page)
+                    .execute(object : DisposableObserver<HitsPage>() {
+                        override fun onNext(value: HitsPage) {
+                            hits.postValue(value.hits)
+                            //saveHits(value)
                         }
 
-                        override fun onError(e: Throwable) {
-                            val searchError = Search()
-                            searchError.error = true
-                            hits.postValue(searchError)
-                        }
+                        override fun onError(e: Throwable) {}
 
                         override fun onComplete() {}
                     })
             } else {
-                searchLocalUseCase.setData(term).execute(object : DisposableObserver<Search>() {
+                /*searchLocalUseCase.setData(term).execute(object : DisposableObserver<Search>() {
                     override fun onNext(value: Search) {
                         hits.postValue(value)
                     }
@@ -92,12 +87,33 @@ class HitsViewModel() : ViewModel() {
                     }
 
                     override fun onComplete() {}
-                })
+                })*/
             }
         }
     }
 
-    private fun saveHits(hits: List<Hits>) {
+    private fun ArrayList<Hits>.removeHit(hits: Hits) {
+        this.forEach {
+            if(it.storyId == hits.storyId) {
+                remove(it)
+                return
+            }
+        }
+    }
+
+    private fun clean(hits: ArrayList<Hits>): ArrayList<Hits> {
+        deletedHits.forEach {
+            hits.removeHit(it)
+        }
+
+        return hits
+    }
+
+    fun deleteHits(position: Int) {
+        hits.value?.get(position)?.let { deletedHits.add(it) }
+    }
+
+    /*private fun saveHits(hits: List<Hits>) {
         saveSearchUseCase.setData(search).execute(object : DisposableObserver<Boolean>() {
             override fun onComplete() {}
 

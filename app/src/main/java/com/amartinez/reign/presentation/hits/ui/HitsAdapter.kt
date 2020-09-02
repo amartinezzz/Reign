@@ -37,6 +37,14 @@ class HitsAdapter(private val context: Context,
         results.addAll(list)
     }
 
+    fun removeItem(position: Int) {
+        results.removeAt(position)
+    }
+
+    fun clear() {
+        results.clear()
+    }
+
     override fun onBindViewHolder(holder: HitsHolder, position: Int) {
         holder.bind(position, results.get(position))
     }

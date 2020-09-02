@@ -10,6 +10,7 @@ interface Api {
     @Headers("Accept: application/json")
     @GET("search_by_date")
     fun search(
-        @Query("query") term: String
+        @Query("query") term: String,
+        @Query("page") page: Int
     ): Observable<HitsResponse?>
 }

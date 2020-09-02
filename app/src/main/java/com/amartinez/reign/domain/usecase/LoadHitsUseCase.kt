@@ -13,9 +13,15 @@ import javax.inject.Inject
 class LoadHitsUseCase @Inject constructor(private val repository: Repository) {
 
     private val term: String = "android"
+    private var page: Int = 0
 
     private fun createObservableUseCase(): Observable<HitsPage> {
-        return repository.loadHits(term)
+        return repository.loadHits(term, page)
+    }
+
+    fun setData(page: Int): LoadHitsUseCase {
+        this.page = page
+        return this
     }
 
     fun execute(disposableObserver: DisposableObserver<HitsPage>) {

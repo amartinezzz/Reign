@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.navigation.NavController
@@ -12,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.amartinez.reign.R
 import com.amartinez.reign.databinding.ItemHitsBinding
 import com.amartinez.reign.domain.model.Hits
+import org.ocpsoft.prettytime.PrettyTime
+import java.util.*
+import kotlin.collections.ArrayList
 
 class HitsAdapter(private val context: Context,
                   private val navController: NavController) : RecyclerView.Adapter<HitsAdapter.HitsHolder>() {
@@ -47,22 +51,16 @@ class HitsAdapter(private val context: Context,
         @SuppressLint("ClickableViewAccessibility")
         fun bind(position: Int, hits: Hits) {
             val binder = DataBindingUtil.getBinding<ItemHitsBinding>(view)
+            val prettyTime = PrettyTime(Locale.getDefault())
 
-            /*binder?.ivAlbum?.let {
-                Glide.with(context)
-                    .load(result.artworkUrl30)
-                    .placeholder(R.drawable.placeholder)
-                    .into(it)
-            }*/
-            binder?.tvArtist?.text = hits.title
-            /*binder?.tvSong?.text = result.trackName
-            val onClickListener = View.OnClickListener {
-                val bundle = bundleOf("result" to result)
-                    navController.navigate(R.id.action_searchFragment_to_detailFragment, bundle)
-                }
-            binder?.ivAlbum?.setOnClickListener(onClickListener)
-            binder?.tvArtist?.setOnClickListener(onClickListener)
-            binder?.tvSong?.setOnClickListener(onClickListener)*/
+            val title = if(hits.storyTitle != null) hits.storyTitle else hits.title
+            binder?.tvTitle?.text = title?.capitalize()
+            binder?.tvAuthor?.text = hits.author?.capitalize()
+            binder?.tvDate?.text = prettyTime.format(hits.createdAt)
+            itemView.setOnClickListener{
+                val bundle = bundleOf("hits_url" to hits.storyUrl)
+                navController.navigate(R.id.action_hitsFragment_to_hitsDetailFragment, bundle)
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 class HighlightResultEntity (
-    var author: AuthorEntity,
-    var comment_text: CommentTextEntity,
-    var story_title: StoryTitleEntity
+    var author: AuthorEntity?,
+    var comment_text: CommentTextEntity?,
+    var story_title: StoryTitleEntity?
 ) : Parcelable

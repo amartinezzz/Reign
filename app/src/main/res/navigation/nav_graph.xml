@@ -5,5 +5,13 @@
     <fragment
         android:id="@+id/hitsFragment"
         android:name="com.amartinez.reign.presentation.hits.ui.HitsFragment"
-        android:label="HitsFragment" />
+        android:label="HitsFragment" >
+        <action
+            android:id="@+id/action_hitsFragment_to_hitsDetailFragment"
+            app:destination="@id/hitsDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/hitsDetailFragment"
+        android:name="com.amartinez.reign.presentation.hitsdetail.ui.HitsDetailFragment"
+        android:label="HitsDetailFragment" />
 </navigation>

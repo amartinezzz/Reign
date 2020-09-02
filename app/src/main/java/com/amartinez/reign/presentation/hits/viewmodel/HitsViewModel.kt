@@ -28,6 +28,7 @@ class HitsViewModel() : ViewModel() {
                         }
 
                         override fun onError(e: Throwable) {
+                            e.printStackTrace()
                             val hitsNotFound = ArrayList<Hits>()
                             hits.postValue(hitsNotFound)
                         }

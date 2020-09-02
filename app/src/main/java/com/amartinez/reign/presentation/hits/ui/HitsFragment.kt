@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.amartinez.reign.R
@@ -43,17 +44,11 @@ class HitsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAdapter()
-        binder.bSearch.setOnClickListener {
-            if (binder.etSearch.text.toString().isNotEmpty()) {
-                val hitsList = viewModel.loadHits(isNetworkConnected())
-                hitsList.observe(viewLifecycleOwner, Observer {
-                    displaySearchResults(hitsList.value!!)
-                    hideSoftKeyboard(binder.etSearch)
-                })
-            } else {
-                //binder.etSearch.error = getString(R.string.search_error)
-            }
-        }
+
+        val hitsList = viewModel.loadHits(isNetworkConnected())
+        hitsList.observe(viewLifecycleOwner, Observer {
+            displaySearchResults(hitsList.value!!)
+        })
     }
 
     private fun injectDependencies() {
@@ -64,9 +59,10 @@ class HitsFragment : Fragment() {
         adapter = HitsAdapter(requireContext(), findNavController())
         val linearLayoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binder.rvSearch.layoutManager = linearLayoutManager
-        binder.rvSearch.adapter = adapter
-        binder.rvSearch.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binder.rvHits.layoutManager = linearLayoutManager
+        binder.rvHits.adapter = adapter
+        binder.rvHits.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
+        binder.rvHits.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!isLoading) {

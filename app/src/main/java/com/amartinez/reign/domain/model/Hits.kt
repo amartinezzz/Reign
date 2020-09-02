@@ -3,7 +3,7 @@ package com.amartinez.reign.domain.model
 import java.util.*
 
 class Hits (
-    var created_at: Date?,
+    var createdAt: Date?,
     var title: String?,
     var url: String?,
     var author: String?,

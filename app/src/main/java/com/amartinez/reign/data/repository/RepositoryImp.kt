@@ -25,7 +25,7 @@ class RepositoryImp(private val api: Api) : Repository {
     )
 
     private fun HighlightResultEntity.toDomain() = HighlightResult(
-        author.toDomain(), comment_text.toDomain(), story_title.toDomain()
+        author?.toDomain(), comment_text?.toDomain(), story_title?.toDomain()
     )
 
     private fun AuthorEntity.toDomain() = Author(

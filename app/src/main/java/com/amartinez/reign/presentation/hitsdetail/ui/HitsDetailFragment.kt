@@ -1,7 +1,5 @@
 package com.amartinez.reign.presentation.hitsdetail.ui
 
-import android.content.Context
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.amartinez.reign.R
 import com.amartinez.reign.databinding.FragmentHitsDetailBinding
+
 
 class HitsDetailFragment : Fragment() {
     private lateinit var binder: FragmentHitsDetailBinding
@@ -25,11 +24,11 @@ class HitsDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val url = requireArguments().getString("hits_url")
         binder.webView.loadUrl(url)
-    }
 
-    private fun isNetworkConnected() : Boolean {
-        val cm =
-            requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return cm.activeNetworkInfo != null
+        val onClickListener = View.OnClickListener {
+            activity?.onBackPressed()
+        }
+        binder.ivBack.setOnClickListener(onClickListener)
+        binder.tvBack.setOnClickListener(onClickListener)
     }
 }

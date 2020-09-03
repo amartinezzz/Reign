@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Reign</string>
+
+    <string name="hits_title">Articles</string>
+    <string name="hits_not_found">Hits not found</string>
+    <string name="hits_not_link">No associated link</string>
+
+    <string name="hits_detail">Back</string>
 </resources>

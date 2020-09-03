@@ -28,7 +28,7 @@ class HitsViewModel : ViewModel() {
 
     fun loadHits(isNetworkConnected: Boolean, ifRefreshing: Boolean): LiveData<ArrayList<Hits>> {
         if(ifRefreshing)
-            hits = MutableLiveData<ArrayList<Hits>>()
+            hits = MutableLiveData()
 
         hits.also {
             if (isNetworkConnected) {

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
@@ -46,6 +45,7 @@ class HitsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAdapter()
+        binder.flLoading.visibility = View.VISIBLE
         observeHits(false)
     }
 
@@ -103,10 +103,13 @@ class HitsFragment : Fragment() {
         adapter.addItems(results)
         adapter.notifyDataSetChanged()
         isLoading = false
-    }
+        binder.flLoading.visibility = View.GONE
 
-    fun error() {
-        Toast.makeText(context, "No se encontro data", Toast.LENGTH_LONG).show()
+        if(adapter.itemCount == 0) {
+            binder.tvNoHits.visibility = View.VISIBLE
+        } else {
+            binder.tvNoHits.visibility = View.GONE
+        }
     }
 
     private fun isNetworkConnected() : Boolean {

@@ -4,7 +4,6 @@ import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import java.util.*
-import javax.annotation.Nullable
 
 open class HitsLocal (
     var created_at : Date? = Date(),

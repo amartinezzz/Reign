@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -46,7 +47,7 @@ class HitsAdapter(private val context: Context,
     }
 
     override fun onBindViewHolder(holder: HitsHolder, position: Int) {
-        holder.bind(position, results.get(position))
+        holder.bind(results[position])
     }
 
     override fun getItemCount(): Int {
@@ -57,7 +58,7 @@ class HitsAdapter(private val context: Context,
         private val touched = false
 
         @SuppressLint("ClickableViewAccessibility")
-        fun bind(position: Int, hits: Hits) {
+        fun bind(hits: Hits) {
             val binder = DataBindingUtil.getBinding<ItemHitsBinding>(view)
             val prettyTime = PrettyTime(Locale.getDefault())
 
@@ -66,8 +67,12 @@ class HitsAdapter(private val context: Context,
             binder?.tvAuthor?.text = hits.author?.capitalize()
             binder?.tvDate?.text = prettyTime.format(hits.createdAt)
             itemView.setOnClickListener{
-                val bundle = bundleOf("hits_url" to hits.storyUrl)
-                navController.navigate(R.id.action_hitsFragment_to_hitsDetailFragment, bundle)
+                if(!hits.storyUrl.isNullOrEmpty()) {
+                    val bundle = bundleOf("hits_url" to hits.storyUrl)
+                    navController.navigate(R.id.action_hitsFragment_to_hitsDetailFragment, bundle)
+                } else {
+                    Toast.makeText(context, R.string.hits_not_link, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

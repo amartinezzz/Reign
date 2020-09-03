@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
+    app:startDestination="@id/hitsFragment">
+    <fragment
+        android:id="@+id/hitsFragment"
+        android:name="com.amartinez.reign.presentation.hits.ui.HitsFragment"
+        android:label="HitsFragment" >
+        <action
+            android:id="@+id/action_hitsFragment_to_hitsDetailFragment"
+            app:destination="@id/hitsDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/hitsDetailFragment"
+        android:name="com.amartinez.reign.presentation.hitsdetail.ui.HitsDetailFragment"
+        android:label="HitsDetailFragment" />
+</navigation>
